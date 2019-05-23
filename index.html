@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Tennis</title>
+	<link rel="stylesheet" href="https://demos.jquerymobile.com/1.4.5/css/themes/default/jquery.mobile-1.4.5.min.css">
+	<script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+	<script type="text/javascript">
+		var jugador1 ='';
+		var jugador2 ='';
+		var puntos = [0,0];
+		var juegos = [0,0];
+		var set = [0,0];
+
+		var saca = 0;
+		var ganador = "";
+		$(document).bind("pageinit", function(){
+			$("#win1, #ef1, #enf2").bind("click", function () {
+				if(saca==0){
+					sumaPunto(true);					
+				}else{
+					sumaPunto(false);
+				}
+				$(this).removeAttr("checked").checkboxradio("refresh");
+				actualizaMarcador();
+				$.mobile.changePage($("#pagina2"),"none");				
+			});
+			$("#win2,#ef2,#enf1").bind("click", function () {
+				sumaPunto(false);
+				$(this).removeAttr("checked").checkboxradio("refresh");
+				actualizaMarcador();
+				$.mobile.changePage($("#pagina2"),"none");				
+			});
+			$("#s1,#s2").on("click", function (event) {
+				
+				$.mobile.changePage($("#pagina3"),"none");
+			});
+			$("#falta2").on("click" , function (event) {
+				limpiaBotones();
+				sumaPunto(false);
+			});
+
+			$("#ace1,#ace2").bind("click" , function (event) {
+				limpiaBotones();
+				sumaPunto(true);
+			});
+
+			$("#falta1").on("click" , function (event) {
+				$("#s1").attr("disabled", "disabled");
+				$("#ace1").attr("disabled", "disabled");
+				$("#falta1").attr("disabled", "disabled");		
+
+				$("#s2").removeAttr("disabled").checkboxradio("refresh");
+				$("#ace2").removeAttr("disabled").checkboxradio("refresh");
+				$("#falta2").removeAttr("disabled").checkboxradio("refresh");
+			});
+
+			$("#pagina2").on("pageinit", function(event){
+				event.stopPropagation();
+				jugador1=$("#nombre1").val();
+				jugador2=$("#nombre2").val();
+				if (jugador1=="") { jugador1="Jugador1"}
+				if (jugador2=="") { jugador1="Jugador2"}
+				$("#jugador11").html("<p>"+jugador1+"</p>");
+				$("#jugador21").html("<p>"+jugador2+"</p>");
+
+				$("#s2").attr("disabled", "disabled");
+				$("#ace2").attr("disabled", "disabled");
+				$("#falta2").attr("disabled", "disabled");
+			});
+			$("#pagina3").on("pageinit", function(event){
+				event.stopPropagation();
+				$("#jugador12").html("<p>"+jugador1+"</p>");
+				$("#jugador22").html("<p>"+jugador2+"</p>");
+			});
+
+			$("#pagina4").on("pageinit", function(event){
+				event.stopPropagation();
+				$("#ganador").html(ganador);
+			});
+		});
+		function limpiaBotones() {
+			$("#s2").attr("disabled", "disabled");
+			$("#ace2").attr("disabled", "disabled");
+			$("#falta2").attr("disabled", "disabled");		
+
+			$("#s1").removeAttr("disabled").checkboxradio("refresh");
+			$("#ace1").removeAttr("disabled").checkboxradio("refresh");
+			$("#falta1").removeAttr("disabled").checkboxradio("refresh");
+
+			$("#s1").removeAttr("checked").checkboxradio("refresh");
+			$("#s2").removeAttr("checked").checkboxradio("refresh");
+			$("#ace1").removeAttr("checked").checkboxradio("refresh");
+			$("#ace2").removeAttr("checked").checkboxradio("refresh");
+			$("#falta1").removeAttr("checked").checkboxradio("refresh");
+			$("#falta2").removeAttr("checked").checkboxradio("refresh");
+		};
+		function sumaPunto(favor){
+			var numJugador;
+			if (favor) {
+				numJugador=saca;
+			}else{
+				if(saca==0){
+					numJugador=1;
+				}else{
+					numJugador=0;
+				}
+			}
+			puntos[numJugador]+=15;
+			if (puntos[numJugador]==45) puntos[numJugador]=40;
+			if (puntos[numJugador] >40 ) {
+				puntos[0]=0;
+				puntos[1]=0;
+				juegos[numJugador]++;
+				if (juegos[numJugador] ==2) {
+					set[numJugador]++;
+					juegos[0]=0;
+					juegos[1]=0;
+				}
+				if (set[numJugador]==2) {
+					set[0]=0;
+					set[1]=0;
+					alert();
+					if (numJugador == 0) {
+						ganador="Ganador del partido: "+Jugador1;
+					}else{
+						ganador="Ganador del partido: ";	
+					}
+					alert(ganador);
+					$.mobile.changePage($("#pagina4"),"none");
+				}
+				
+
+				if(saca==0){
+					saca=1;
+				}else{
+					saca=0;
+				}
+			}
+			actualizaMarcador();
+		}
+		function actualizaMarcador() {
+			$("#puntos11").text(puntos[0]);
+			$("#puntos21").text(puntos[1]);
+			$("#juegos11").text(juegos[0]);
+			$("#juegos21").text(juegos[1]);
+			$("#set11").text(set[0]);
+			$("#set21").text(set[1]);
+
+			$("#puntos12").text(puntos[0]);
+			$("#puntos22").text(puntos[1]);
+			$("#juegos12").text(juegos[0]);
+			$("#juegos22").text(juegos[1]);
+			$("#set12").text(set[0]);
+			$("#set22").text(set[1]);
+
+			if(saca==0){
+				$("#marca11").attr("src","bolaNaranja.png");
+				$("#marca21").attr("src","");
+				$("#marca12").attr("src","bolaNaranja.png");
+				$("#marca22").attr("src","");
+			}else{
+				$("#marca21").attr("src","bolaNaranja.png");
+				$("#marca11").attr("src","");
+				$("#marca22").attr("src","bolaNaranja.png");
+				$("#marca12").attr("src","");				
+			}
+			limpiaBotones();
+		}
+
+	</script>
+	<script src="https://demos.jquerymobile.com/1.4.5/js/jquery.mobile-1.4.5.min.js"></script>
+	<style type="text/css">
+		
+	</style>
+</head>
+<body>
+	<div data-role="page" id="pagina1">	
+		<div data-role="header">
+			<h1>Tres set, sin ventaja</h1>
+		</div>
+		<div data-role="content">
+		<form>
+			<label for="nombre1"> Jugador 1</label>
+			<input id="nombre1" type="text" name="nombre1">
+			<p>vs</p>
+			<label for="nombre2"> Jugador 2</label>
+			<input id="nombre2" type="text" name="nombre2">
+			<p>&nbsp;</p>
+			<a href="#pagina2" data-role="button"> Iniciar Juego</a>
+		</form>	
+		</div>
+		<div data-role="footer">
+			<h4>derechos reservados de TicTag</h4>
+		</div>
+	</div>
+
+
+	<div data-role="page" id="pagina2">	
+		<div data-role="header">
+			<h1>Saque</h1>
+		</div>
+		<div data-role="content">	
+			<table>
+				<tr>
+					<td><img src="bolaNaranja.png" id="marca11"></td>
+					<td><div id="jugador11"><p>Jugador1</p></div></td>
+					<td><div id="puntos11"><p>0</p></div></td>
+					<td><div id="juegos11"><p>0</p></div></td>
+					<td><div id="set11"><p>0</p></div></td>
+				</tr>
+				<tr>
+					<td><img src="" id="marca21"></td>
+					<td><div id="jugador21"><p>Jugador1</p></div></td>
+					<td><div id="puntos21"><p>0</p></div></td>
+					<td><div id="juegos21"><p>0</p></div></td>
+					<td><div id="set21"><p>0</p></div></td>
+				</tr>
+			</table>
+						<p>&nbsp;</p>
+						<form>
+							<fieldset data-role="controlgroup">
+								<button id="saque1">Primer saque</button>
+								<input type="radio" name="saque1" id="s1" value="1">
+								<label for="s1"> Primer saque</label>
+
+								<input type="radio" name="saque1" id="ace1" value="2">
+								<label for="ace1"> Ace prime falta</label>
+
+								<input type="radio" name="saque1" id="falta1" value="3">
+								<label for="falta1"> Falta primer saque</label>
+							</fieldset>
+							
+							<fieldset data-role="controlgroup">
+								<button id="saque2">Segundo saque</button>
+								<input type="radio" name="saque2" id="s2" value="4">
+								<label for="s2"> Segundo saque</label>
+
+								<input type="radio" name="saque2" id="ace2" value="5">
+								<label for="ace2"> Ace segundo saque</label>
+
+								<input type="radio" name="saque2" id="falta2" value="6">
+								<label for="falta2"> Doble Falta</label>
+							</fieldset>
+
+						
+
+
+						</form>
+		</div>
+		<div data-role="footer">
+			<h4>derechos reservados de TicTag</h4>
+		</div>
+	</div>
+	
+
+	<div data-role="page" id="pagina3">	
+		<div data-role="header">
+			<h1>Juego</h1>
+		</div>
+		<div data-role="content">	
+
+			<table>
+				<tr>
+					<td><img src="imagenes/bolaNaranja.png" id="marca12"></td>
+					<td><div id="jugador12"><p>Jugador1</p></div></td>
+					<td><div id="puntos12"><p>0</p></div></td>
+					<td><div id="juegos12"><p>0</p></div></td>
+					<td><div id="set12"><p>0</p></div></td>
+				</tr>
+				<tr>
+					<td><img src="imagenes/bolaNaranja.png" id="marca22"></td>
+					<td><div id="jugador22"><p>Jugador1</p></div></td>
+					<td><div id="puntos22"><p>0</p></div></td>
+					<td><div id="juegos22"><p>0</p></div></td>
+					<td><div id="set22"><p>0</p></div></td>
+				</tr>
+			</table>
+						<p>&nbsp;</p>
+						<form>
+							<fieldset data-role="controlgroup">
+								<button id="saque1">Primer jugador</button>
+
+								<input type="radio" name="game1" id="win1" value="1">
+								<label for="win1"> Tiro ganador</label>
+
+								<input type="radio" name="game1" id="ef1" value="2">
+								<label for="ef1"> Error forzado</label>
+
+								<input type="radio" name="game1" id="enf1" value="3">
+								<label for="enf1"> Error no forzado</label>
+							</fieldset>
+							
+							<fieldset data-role="controlgroup">
+								<button id="game2">Segundo Jugador</button>
+								<input type="radio" name="game2" id="win2" value="4">
+								<label for="win2"> Tiro ganador</label>
+
+								<input type="radio" name="game2" id="ef2" value="5">
+								<label for="ef2"> Error Forzado</label>
+
+								<input type="radio" name="game2" id="enf2" value="6">
+								<label for="enf2"> Error no forzado</label>
+							</fieldset>
+
+						
+
+
+						</form>
+
+		</div>
+		<div data-role="footer">
+			<h4>derechos reservados de TicTag</h4>
+		</div>
+	</div>
+	
+
+	<div data-role="page" id="pagina4">	
+		<div data-role="header">
+			<h1>Resultado</h1>
+		</div>
+		<div data-role="content">	
+			<div id="ganador">
+				
+			</div>
+			<a href="#pagina1" data-role="button"> Regresar </a>
+		</div>
+		<div data-role="footer">
+			<h4>derechos reservados de TicTag</h4>
+		</div>
+	</div>
+</body>
+</html>
